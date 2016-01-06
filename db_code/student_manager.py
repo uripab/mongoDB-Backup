@@ -1,16 +1,20 @@
 __author__ = 'Uriel Pavlov'
 
 import db_manager
+from log_manager import db_log
 
 class student_collection():
     """
     Class for accessing the students collection
     """
-    def __init__(self,db_name,server_ip):
+    def __init__(self,db_name,server_ip,port ="27017"):
         self.db_name=db_name
         self.server_ip=server_ip
+        self.port =port
         self.collectionName="students"
-        self.db =db_manager.MongoDB(self.db_name,self.server_ip)
+        db_log.debug( "port  {}".format(port))
+        self.db =db_manager.MongoDB(self.db_name,self.server_ip,self.port )
+        self.col_list =["student_id","first_name","last_name","course"]
     def insert_students(self,doc):
         """
         Insert students object to database
@@ -31,9 +35,8 @@ class student_collection():
         :param column_list: list
         :return:dictionary /None
         """
-        col_list =["first_name","last_name","course"]
         res =self.db.find_documents(self.collectionName,keys={},count=False,sort_key=[("_id", 1)],num_of_document=100)
-        res =self.serialized_answer(res,col_list)
+        res =self.serialized_answer(res,self.col_list)
         return res
 
     def delete_students(self,key):

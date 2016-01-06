@@ -6,9 +6,10 @@ class MongoDB:
     """
     Class for accessing the MongoDB
     """
-    def __init__(self, db_name,server_ip):
+    def __init__(self, db_name,server_ip="localhost",port="27017"):
         self.db_name = db_name
         self.server_ip=server_ip
+        self.port =port
         self.db = self.connectToMongoDB()
 
     def connectToMongoDB(self):
@@ -18,12 +19,13 @@ class MongoDB:
         """
         #IP by default localhost
         try:
-            print "server_ip ={}".format(self.server_ip)
-            conn=pymongo.MongoClient('mongodb://{}:27017'.format(self.server_ip))
+            print "server_ip ={} port ={}".format(self.server_ip,self.port)
+            conn=pymongo.MongoClient('mongodb://{}:{}'.format(self.server_ip,self.port))
         except pymongo.errors.ConnectionFailure, e:
             print "Could not connect to MongoDB: %s" % e
             db_log.error( "Could not connect to MongoDB: %s" % e)
         db_log.debug( "Connected successfully!!!")
+        
         db = conn[self.db_name]
         return db
 
@@ -38,7 +40,7 @@ class MongoDB:
         result =collection.insert_one(document)
         return result.acknowledged
 
-    def find_documents(self,collectionName,keys={},count=False, sort_key=[("_id", 1)],num_of_document=15):
+    def find_documents(self,collectionName,keys={},count=False, sort_key=[("_id", 1)],num_of_document=100):
         """
        Find specific document from database
         :param collectionName: char
