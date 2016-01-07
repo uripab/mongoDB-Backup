@@ -8,6 +8,9 @@ import db_action
 from log_manager import db_log
 
 class student(object):
+    '''
+    class to handle student operation
+    '''
     def __init__(self):
         self.courses =["Algorithms","Java","Python","C++","Machine Learning"]
         self.STANDALONE ="standalone"
@@ -15,6 +18,10 @@ class student(object):
         self.SHARDING ="sharding"
 
     def generate_student_course_and_score(self):
+        '''
+        genarate student firs and last name from names.txt file course from self.courses
+        score and student_id -random
+        '''
         course_doc ={}
         number_of_course = len(self.courses)
         for i in range(0,number_of_course):
@@ -37,6 +44,10 @@ class student(object):
                 self.add_student(doc)
 
     def add_student(self,doc):
+        '''
+        add one document to student collection
+        :param doc: -json object to insert to student collection
+        '''
         for retry in range (4):
             try:
                 students=student_manager.student_collection("college","localhost")
@@ -53,20 +64,35 @@ class student(object):
                 break
 
     def delete_student_collection(self):
+        '''
+        delete all students from  students collection
+        '''
         students=student_manager.student_collection("college","localhost")
         students.delete_students({})
 
     def get_student(self):
+        '''
+        get all student from db
+        :return: list of student
+        '''
         students=student_manager.student_collection("college","localhost")
         res =students.get_students()
         return res
 
     def get_student_from_replicaset(self,port):
+        '''
+        get student data from specific server in the replica set
+        :param port:server port
+        :return: list of student
+        '''
         students=student_manager.student_collection("college","localhost",port)
         res =students.get_students()
         return res
 
 def main_loop():
+    '''
+    program start point create and init the enviroments
+    '''
     action =db_action.database_action()
     while True:
         print " sa          - standalone"

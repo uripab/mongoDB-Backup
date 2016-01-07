@@ -8,6 +8,9 @@ from random import randint
 from log_manager import db_log
 
 class database_action(object):
+    '''
+    class for execute all functionality on database
+    '''
     def __init__(self):
         self.STANDALONE_RESTORE_PATH = '../standalone/mongoRestore.sh'
         self.STANDALONE_DUMP_PATH = '../standalone/mongoDump.sh'
@@ -39,22 +42,34 @@ class database_action(object):
         self.CONFIG_SERVER_DUMP_PATH ="dump_config_server"
 
     def initiate_standalone(self):
+        '''
+        initiate standalone server it delete all previous data
+        '''
         db_log.debug("init standalone")
         print shlex.split('{}'.format(self.INIT_STANDALONE_PATH))
         user_choice = raw_input("initiate standalonet y/n: ")
         if user_choice =='y' or user_choice =='Y':
             subprocess.call(shlex.split('{}'.format(self.INIT_STANDALONE_PATH)))
-        # subprocess.call(INIT_REPLICA_PATH)
 
     def initiate_replicaset(self):
+        '''
+        initiate replicaset servers- it delete all previous data
+        on port 27017 -Primary 27018 27019 secondary
+        '''
         db_log.debug( "init replicaset")
         print shlex.split('{}'.format(self.INIT_REPLICA_PATH))
         user_choice = raw_input("initiate replica-set y/n: ")
         if user_choice =='y' or user_choice =='Y':
             subprocess.call(shlex.split('{}'.format(self.INIT_REPLICA_PATH)))
-            #subprocess.call([self.INIT_REPLICA_PATH])
 
     def initiate_sharding(self):
+        '''
+        initiate shard cluster  servers- it delete all previous data
+        in the shard contain 3 shard each shard is replica set
+        shard 1   on port 37017 -Primary 37018 37019 secondary
+        shard 2   on port 47017 -Primary 47018 47019 secondary
+        shard 3   on port 57017 -Primary 57018 57019 secondary
+        '''
         db_log.debug("init sharding")
         print shlex.split(' {}'.format(self.INIT_SHARD_PATH))
         user_choice = raw_input("initiate shard y/n: ")
@@ -62,6 +77,9 @@ class database_action(object):
             subprocess.call(shlex.split('{}'.format(self.INIT_SHARD_PATH)))
 
     def stop_blancer(self):
+        '''
+        this function stop balancer process in shard enviroment
+        '''
         db_log.debug("stop balancer")
         print "*********************STOP BLANCER*********************\n"
         print "******************************************************"
@@ -72,6 +90,9 @@ class database_action(object):
         time.sleep(5)
 
     def start_blancer(self):
+        '''
+        this function stop balancer process in shard enviroment
+        '''
         db_log.debug("start balancer")
         print "*********************START BLANCER*********************\n"
         print "******************************************************"
@@ -81,14 +102,22 @@ class database_action(object):
         subprocess.call(shlex.split('{} {}'.format(self.STOP_AND_START_BLANCER_PATH,command)))
         time.sleep(5)
 
-
     def mongo_dump_and_restore(self,path,host,port,dump_path):
+        '''
+        function that handle all dump and restore of all deployment
+        Standalone Relica-Set and Sharding
+        :param path: path to bash scrip
+        :param host: ip of db server by default localhost
+        :param port: db port
+        :param dump_path: path to dump file
+        '''
         db_log.debug('{} {} {} {}'.format(path,host ,port,dump_path))
         print shlex.split('{} {} {} {}'.format(path,host ,port,dump_path))
         subprocess.call(shlex.split('{} {} {} {}'.format(path,host ,port,dump_path)))
 
     def mongodb_action(self,deployment):
         '''
+        handle all database action insert data delete backup and restore
         :param deployment: standalone replicaset or sharding
         :return:OK -1
         '''
