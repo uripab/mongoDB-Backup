@@ -11,7 +11,8 @@ class student(object):
     '''
     class to handle student operation
     '''
-    def __init__(self):
+    def __init__(self,student_file_name="small_names.txt"):
+        self.student_file_name =student_file_name
         self.courses =["Algorithms","Java","Python","C++","Machine Learning"]
         self.STANDALONE ="standalone"
         self.REPLICASET ="replicaset"
@@ -32,16 +33,25 @@ class student(object):
         return course_doc
 
     def insert_data_to_student_collection(self):
-        with open("test.txt") as f:
-            for line in f.readlines():
-                student_id =randint(10000,99999)
-                name= line.split(" ")
-                f_name =name[0]
-                l_name =name[1]
-                print "student first name is {} last name {}".format(f_name,l_name)
-                course = self.generate_student_course_and_score()
-                doc = {"student_id":student_id,"first_name":f_name ,"last_name":l_name,"course":course}
-                self.add_student(doc)
+        user_choice = raw_input("do yo want to change default file name? y/n: ")
+        if user_choice =='y' or user_choice =='Y':
+            self.student_file_name = raw_input("Enter file name: ")
+        print self.student_file_name
+        try:
+            with open(self.student_file_name) as f:
+                for line in f.readlines():
+                    student_id =randint(10000,99999)
+                    name= line.split(" ")
+                    f_name =name[0]
+                    l_name =name[1]
+                    print "student first name is {} last name {}".format(f_name,l_name)
+                    course = self.generate_student_course_and_score()
+                    doc = {"student_id":student_id,"first_name":f_name ,"last_name":l_name,"course":course}
+                    self.add_student(doc)
+        except :
+            print "Error : could not  open file {} \n".format(self.student_file_name)
+            print "return to main menu \n"
+            time.sleep(3)
 
     def add_student(self,doc):
         '''
