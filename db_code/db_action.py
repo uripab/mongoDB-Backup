@@ -13,8 +13,10 @@ class database_action(object):
         self.STANDALONE_DUMP_PATH = '../standalone/mongoDump.sh'
         self.REPLICASET_RESTORE_PATH = '../replica-set/mongoRestore.sh'
         self.REPLICASET_DUMP_PATH = '../replica-set/mongoDump.sh'
+        self.INIT_STANDALONE_PATH = '../script/init_standalone.sh'
         self.INIT_REPLICA_PATH = '../script/init_replicaset.sh'
         self.INIT_SHARD_PATH = '../script/init_shard.sh'
+        self.STOP_AND_START_BLANCER_PATH = '../script/stop_and_start_balancer.sh'
         self.LOCALHOST ='localhost'
         self.STANDALONE_PORT_27017 ='27017'
         self.REPLICASET_SEONDARY_PORT_27018 ='27018'
@@ -38,6 +40,10 @@ class database_action(object):
 
     def initiate_standalone(self):
         db_log.debug("init standalone")
+        print shlex.split('{}'.format(self.INIT_STANDALONE_PATH))
+        user_choice = raw_input("initiate standalonet y/n: ")
+        if user_choice =='y' or user_choice =='Y':
+            subprocess.call(shlex.split('{}'.format(self.INIT_STANDALONE_PATH)))
         # subprocess.call(INIT_REPLICA_PATH)
 
     def initiate_replicaset(self):
@@ -59,12 +65,20 @@ class database_action(object):
         db_log.debug("stop balancer")
         print "*********************STOP BLANCER*********************\n"
         print "******************************************************"
+        command ="stop"
+        db_log.debug('{} {} '.format(self.STOP_AND_START_BLANCER_PATH,command))
+        print shlex.split('{} {}'.format(self.STOP_AND_START_BLANCER_PATH,command))
+        subprocess.call(shlex.split('{} {}'.format(self.STOP_AND_START_BLANCER_PATH,command)))
         time.sleep(5)
 
     def start_blancer(self):
         db_log.debug("start balancer")
         print "*********************START BLANCER*********************\n"
         print "******************************************************"
+        command ="start"
+        db_log.debug('{} {}'.format(self.STOP_AND_START_BLANCER_PATH,command))
+        print shlex.split('{} {}'.format(self.STOP_AND_START_BLANCER_PATH,command))
+        subprocess.call(shlex.split('{} {}'.format(self.STOP_AND_START_BLANCER_PATH,command)))
         time.sleep(5)
 
 
@@ -98,10 +112,23 @@ class database_action(object):
                 my_student.add_student(new_student)
             elif user_choice == 'b':
                 if deployment =="standalone":
+                    db_log.debug("lock Database")
+                    print shlex.split('{} {} {}'.format("mongo", "--eval", "db.fsyncLock()" ))
+                    subprocess.call(shlex.split('{} {} {}'.format("mongo", "--eval", "db.fsyncLock()")))
+                    time.sleep(5)
+                    print "*********************lock Database*********************\n"
+                    print "******************************************************"
+                    time.sleep(5)
                     self.mongo_dump_and_restore(self.STANDALONE_DUMP_PATH,
                                                 self.LOCALHOST,
                                                 self.STANDALONE_PORT_27017,
                                                 self.STANDALONE_DUMP_FILE_PATH)
+                    db_log.debug("Unlock Database")
+                    print "*********************Unlock Database*********************\n"
+                    print "******************************************************"
+                    print shlex.split('{} {} {}'.format("mongo", "--eval", "db.fsyncUnlock()" ))
+                    subprocess.call(shlex.split('{} {} {}'.format("mongo", "--eval", "db.fsyncUnlock()")))
+                    time.sleep(5)
                 elif deployment =="replicaset":
                     self.mongo_dump_and_restore(self.REPLICASET_DUMP_PATH,
                                                 self.LOCALHOST,
