@@ -19,13 +19,12 @@ class MongoDB:
         """
         #IP by default localhost
         try:
-            print "server_ip ={} port ={}".format(self.server_ip,self.port)
+            db_log.debug("server_ip ={} port ={}".format(self.server_ip,self.port))
             conn=pymongo.MongoClient('mongodb://{}:{}'.format(self.server_ip,self.port))
         except pymongo.errors.ConnectionFailure, e:
             print "Could not connect to MongoDB: %s" % e
             db_log.error( "Could not connect to MongoDB: %s" % e)
         db_log.debug( "Connected successfully!!!")
-        
         db = conn[self.db_name]
         return db
 
