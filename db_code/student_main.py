@@ -1,11 +1,14 @@
 __author__ = 'Uriel Pavlov'
-
+import os
 import pymongo
 import time
 import student_manager
 from random import randint
 import db_action
 from log_manager import db_log
+
+ERR_WRONG =1001
+ERR_IO =1002
 
 class student(object):
     '''
@@ -49,8 +52,8 @@ class student(object):
                     doc = {"student_id":student_id,"first_name":f_name ,"last_name":l_name,"course":course}
                     self.add_student(doc)
         except :
-            print "Error : could not  open file {} \n".format(self.student_file_name)
-            print "return to main menu \n"
+            print "Error :{} could not  open file {} \n".format(ERR_IO,self.student_file_name)
+            print "return to menu \n"
             time.sleep(3)
 
     def add_student(self,doc):
@@ -105,25 +108,27 @@ def main_loop():
     '''
     action =db_action.database_action()
     while True:
-        print " sa          - standalone"
-        print " r           - replica-set "
-        print " s           - sharding "
-        print " q           - quit "
-        user_choice = raw_input("Enter choice: ")
+        os.system("clear")
+        print "Deployment Types: \n"
+        print " a           - Standalone"
+        print " r           - Replica set "
+        print " s           - Sharding "
+        print " q           - Quit\n "
+        user_choice = raw_input("Enter deploymet type: ")
         if user_choice == 'q':
             break
-        elif user_choice == 'sa':
+        elif user_choice == 'a':
             action.initiate_standalone()
             action.mongodb_action(action.STANDALONE)
-        elif user_choice == 'r':#'replicaset':
+        elif user_choice == 'r':
             action.initiate_replicaset()
             action.mongodb_action(action.REPLICASET)
         elif user_choice == 's':
             action.initiate_sharding()
             action.mongodb_action(action.SHARDING)
         else:
-            print "I don't know how to {}".format(user_choice)
-            time.sleep(1)
+            print "you did not choose from the above -{} error {} \n".format(user_choice,ERR_WRONG)
+            time.sleep(4)
             print ""
 
 if __name__ == "__main__":

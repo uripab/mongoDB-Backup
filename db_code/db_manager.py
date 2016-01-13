@@ -2,9 +2,9 @@ __author__ = 'Uriel Pavlov'
 import pymongo
 from log_manager import db_log
 
-class MongoDB:
+class MongoDBManager:
     """
-    Class for accessing the MongoDB
+    Class for accessing the MongoDB database
     """
     def __init__(self, db_name,server_ip="localhost",port="27017"):
         self.db_name = db_name
@@ -17,7 +17,6 @@ class MongoDB:
         Connect To Mongo DataBase
         :return:connection
         """
-        #IP by default localhost
         try:
             db_log.debug("server_ip ={} port ={}".format(self.server_ip,self.port))
             conn=pymongo.MongoClient('mongodb://{}:{}'.format(self.server_ip,self.port))

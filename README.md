@@ -1,9 +1,12 @@
-Repository for MTA final Msc. project: MongoDB backup process in Distributed Databases.
+copyright:Uriel Pavlov 2016 All rights reserved
 
-propuse of this work is to understand and implemantation backup strategy
-Two Stage Backup Process Distributed Databases in diffrent deployment systems
+Repository for MTA final Msc. project: MongoDB backup process in a distributed system.
 
-note: This is a work in progress! This is, by no means, a download-and-run project.
+The purpose of this program is to demonstrate  and implemant a two stage backup process,
+a backup strategy for distributed databases in diffrent deployment systems.
+
+
+note: This is a work in progress!
 
 pre-requites and setup instructions
 install MongodDB version: 3.2.0  by running in root permision:

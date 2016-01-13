@@ -1,5 +1,6 @@
 __author__ = 'Uriel Pavlov'
 
+import os
 import time
 import subprocess
 import shlex
@@ -46,8 +47,8 @@ class database_action(object):
         initiate standalone server it delete all previous data
         '''
         db_log.debug("init standalone")
-        print shlex.split('{}'.format(self.INIT_STANDALONE_PATH))
-        user_choice = raw_input("initiate standalonet y/n: ")
+        os.system("clear")
+        user_choice = raw_input("initiate standalone  y/n: ")
         if user_choice =='y' or user_choice =='Y':
             subprocess.call(shlex.split('{}'.format(self.INIT_STANDALONE_PATH)))
 
@@ -57,7 +58,7 @@ class database_action(object):
         on port 27017 -Primary 27018 27019 secondary
         '''
         db_log.debug( "init replicaset")
-        print shlex.split('{}'.format(self.INIT_REPLICA_PATH))
+        os.system("clear")
         user_choice = raw_input("initiate replica-set y/n: ")
         if user_choice =='y' or user_choice =='Y':
             subprocess.call(shlex.split('{}'.format(self.INIT_REPLICA_PATH)))
@@ -71,7 +72,7 @@ class database_action(object):
         shard 3   on port 57017 -Primary 57018 57019 secondary
         '''
         db_log.debug("init sharding")
-        print shlex.split(' {}'.format(self.INIT_SHARD_PATH))
+        os.system("clear")
         user_choice = raw_input("initiate shard y/n: ")
         if user_choice =='y' or user_choice =='Y':
             subprocess.call(shlex.split('{}'.format(self.INIT_SHARD_PATH)))
@@ -85,7 +86,6 @@ class database_action(object):
         print "******************************************************"
         command ="stop"
         db_log.debug('{} {} '.format(self.STOP_AND_START_BLANCER_PATH,command))
-        print shlex.split('{} {}'.format(self.STOP_AND_START_BLANCER_PATH,command))
         subprocess.call(shlex.split('{} {}'.format(self.STOP_AND_START_BLANCER_PATH,command)))
         time.sleep(5)
 
@@ -98,7 +98,6 @@ class database_action(object):
         print "******************************************************"
         command ="start"
         db_log.debug('{} {}'.format(self.STOP_AND_START_BLANCER_PATH,command))
-        print shlex.split('{} {}'.format(self.STOP_AND_START_BLANCER_PATH,command))
         subprocess.call(shlex.split('{} {}'.format(self.STOP_AND_START_BLANCER_PATH,command)))
         time.sleep(5)
 
@@ -112,7 +111,6 @@ class database_action(object):
         :param dump_path: path to dump file
         '''
         db_log.debug('{} {} {} {}'.format(path,host ,port,dump_path))
-        print shlex.split('{} {} {} {}'.format(path,host ,port,dump_path))
         subprocess.call(shlex.split('{} {} {} {}'.format(path,host ,port,dump_path)))
 
     def mongodb_action(self,deployment):
@@ -123,12 +121,13 @@ class database_action(object):
         '''
         my_student =student_main.student()
         while True:
-            print " a - add student "
-            print " d - delete students "
-            print " b - backup db "
-            print " r - restore db "
-            print " i - insert all student"
-            print " q - return to main menu "
+            os.system("clear")
+            print " a - Add  new student "
+            print " d - Delete all students "
+            print " b - Backup db "
+            print " r - Restore db "
+            print " i - Insert all student"
+            print " q - Return to main menu \n"
             user_choice = raw_input("Enter choice: ")
             if user_choice == 'q':
                 break
@@ -142,9 +141,7 @@ class database_action(object):
             elif user_choice == 'b':
                 if deployment =="standalone":
                     db_log.debug("lock Database")
-                    print shlex.split('{} {} {}'.format("mongo", "--eval", "db.fsyncLock()" ))
                     subprocess.call(shlex.split('{} {} {}'.format("mongo", "--eval", "db.fsyncLock()")))
-                    time.sleep(5)
                     print "*********************lock Database*********************\n"
                     print "******************************************************"
                     time.sleep(5)
@@ -155,7 +152,6 @@ class database_action(object):
                     db_log.debug("Unlock Database")
                     print "*********************Unlock Database*********************\n"
                     print "******************************************************"
-                    print shlex.split('{} {} {}'.format("mongo", "--eval", "db.fsyncUnlock()" ))
                     subprocess.call(shlex.split('{} {} {}'.format("mongo", "--eval", "db.fsyncUnlock()")))
                     time.sleep(5)
                 elif deployment =="replicaset":
@@ -166,35 +162,34 @@ class database_action(object):
                 elif deployment =="sharding":
                     #stop balancer
                     self.stop_blancer()
-                    #for each shard backup secondary
-                    print "REPLICASET_DUMP_PATH",self.REPLICASET_DUMP_PATH
-                    print "dump shard 1 port {}".format(self.SHARD_1_SEONDARY_PORT_37018)
+                    #for each shard backup his secondary
+                    db_log.debug( "dump shard 1 port {}".format(self.SHARD_1_SEONDARY_PORT_37018))
                     self.mongo_dump_and_restore(self.REPLICASET_DUMP_PATH,
                                                 self.LOCALHOST,
                                                 self.SHARD_1_SEONDARY_PORT_37018,
                                                 self.SHARD_1_DUMP_PATH)
                     time.sleep(2)
-                    print "dump shard 2 port {}".format(self.SHARD_2_SEONDARY_PORT_47018)
+                    db_log.debug("dump shard 2 port {}".format(self.SHARD_2_SEONDARY_PORT_47018))
                     self.mongo_dump_and_restore(self.REPLICASET_DUMP_PATH,
                                                 self.LOCALHOST,
                                                 self.SHARD_2_SEONDARY_PORT_47018,
                                                 self.SHARD_2_DUMP_PATH)
                     time.sleep(2)
-                    print "dump shard 3 port {}".format(self.SHARD_3_SEONDARY_PORT_57018)
+                    db_log.debug( "dump shard 3 port {}".format(self.SHARD_3_SEONDARY_PORT_57018))
                     self.mongo_dump_and_restore(self.REPLICASET_DUMP_PATH,
                                                 self.LOCALHOST,
                                                 self.SHARD_3_SEONDARY_PORT_57018,
                                                 self.SHARD_3_DUMP_PATH)
                     time.sleep(2)
                     #backup config server
-                    print "dump config server  port {}".format(self.SHARD_CONFIG_SERVER_PORT_57040)
+                    db_log.debug( "dump config server  port {}".format(self.SHARD_CONFIG_SERVER_PORT_57040))
                     self.mongo_dump_and_restore(self.REPLICASET_DUMP_PATH,
                                                 self.LOCALHOST,
                                                 self.SHARD_CONFIG_SERVER_PORT_57040,
                                                 self.CONFIG_SERVER_DUMP_PATH)
                     self.start_blancer()
                 else:
-                    print "not valid deployment"
+                    db_log.debug( "not valid deployment")
                     exit(1)
             elif user_choice == 'r':
                 if deployment =="standalone":
@@ -203,10 +198,10 @@ class database_action(object):
                                                self.STANDALONE_PORT_27017,
                                                self.STANDALONE_DUMP_FILE_PATH)
                 elif deployment =="replicaset":
-                    print "replica set restore parameters {} {} {} {}".format(self.REPLICASET_RESTORE_PATH,
+                    db_log.debug( "replica set restore parameters {} {} {} {}".format(self.REPLICASET_RESTORE_PATH,
                                                                               self.LOCALHOST,
                                                                               self.REPLICASET_PRIMARY_PORT_27017,
-                                                                              self.REPLICASET_DUMP_FILE_PATH)
+                                                                              self.REPLICASET_DUMP_FILE_PATH))
                     self.mongo_dump_and_restore(self.REPLICASET_RESTORE_PATH,
                                            self.LOCALHOST,
                                            self.REPLICASET_PRIMARY_PORT_27017,
@@ -231,15 +226,15 @@ class database_action(object):
                                            self.SHARD_CONFIG_SERVER_PORT_57040,
                                            self.CONFIG_SERVER_DUMP_PATH)
                 else:
-                    print "not valid deployment"
+                    db_log.error(" Error not valid deployment")
                     exit(1)
             elif user_choice == 'd':
                 my_student.delete_student_collection()
             elif user_choice == 'i':
                 my_student.insert_data_to_student_collection()
             else:
-                print "I don't know how to {}".format(user_choice)
-                time.sleep(1)
-                print ""
+                db_log.debug( "you did not choose from the above -{} error {} \n".format(user_choice,student_main.ERR_WRONG))
+                time.sleep(5)
+
         return 1
 

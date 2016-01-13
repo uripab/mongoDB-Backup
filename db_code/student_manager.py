@@ -13,7 +13,7 @@ class student_collection():
         self.port =port
         self.collectionName="students"
         db_log.debug( "port  {}".format(port))
-        self.db =db_manager.MongoDB(self.db_name,self.server_ip,self.port )
+        self.db =db_manager.MongoDBManager(self.db_name, self.server_ip, self.port)
         self.col_list =["student_id","first_name","last_name","course"]
     def insert_students(self,doc):
         """
